@@ -1,0 +1,60 @@
+*cmos inverter
+
+.include /mnt/shared/Docs/Rudra/NITK/sem5/vlsilab/t14y_tsmc_025_level3.txt
+
+*voltage
+VDD vdd 0 5
+VIN in 0 PULSE(0 5 0n 1n 1n 50n 100n)
+VS vs 0 0
+
+* PMOS load
+m0 out in vdd vdd cmosp L=1u W=2.5u
+
+* capacitor (single load capacitance)
+* Cload out 0 1p
+
+* nmos transistor driver
+m1 out in vs vs cmosn l=1u w=1u
+
+.dc VIN 0 5 0.01
+.tran 1n 200n
+
+.control
+    run
+    meas tran vd_max MAX out from=0.1n to=50n
+    meas tran vd_min MIN out from=1.5n to=50n
+    n to=50n
+    let v_10 = vd_min + 0.1*(vd_max - vd_min)
+    let v_90 = vd_min + 0.9*(vd_max - vd_min)
+    print v_10, v_90
+
+    meas tran tr TRIG out VAL=v_10 RISE=1 TARG out VAL=v_90 RISE=1
+    meas tran tf TRIG out VAL=v_90 FALL=1 TARG out VAL=v_10 FALL=1
+
+    let v_50 = vd_min + 0.5*(vd_max - vd_min)
+
+    meas tran pdlh TRIG in VAL=2.5 RISE=1 TARG out VAL=v_50 RISE=1
+    meas tran pdhl TRIG in VAL=2.5 FALL=1 TARG out VAL=v_50 RISE=1
+    let pd = 0.5*(pdlh+pdhl)
+    print pd
+
+    let slope = deriv(out)
+    meas dc VOH find out when slope= -1 cross = 1
+    meas dc VOL find out when slope= -1 cross = 2
+    meas dc VIL find in when slope=-1 cross=1
+    meas dc VIH find in when slope=-1 cross=2
+
+    let nmh = voh - vih
+    let nml = vil -vol
+
+    let pwr = v(vdd)*(-vdd#branch)
+    meas tran Pavg AVG pwr from=0n to=200n
+    meas tran Pmax MAX pwr from=0n to=200n
+    meas tran Energy INTEG pwr from=0n to=200n
+.endc
+
+.control
+    plot (-(tran1.vdd#branch))
+    plot in dc1.out
+    plot tran1.out in
+.endc

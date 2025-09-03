@@ -1,0 +1,26 @@
+*nmos.cir
+
+.include /home/rudra/Documents/vlsilab/t14y_tsmc_025_level3.txt
+
+
+* Voltage sources
+Vdd vdd 0 5         ; Drain supply = 2.5V
+Vin in 0 1.0           ; Gate voltage = 1.0V
+Vs  Vs 0 0            ; Source tied to ground (redundant, just for clarity)
+
+* NMOS transistor
+M1 vdd in Vs Vs cmosn l=1u w=0.5u
+
+.control
+dc Vin 0 5 0.1 Vdd 0 3.3 1
+run
+setplot dc1
+plot -vdd#branch
+
+dc vdd 0 5 0.1 vin 0 3.3 1
+run
+setplot dc2
+plot -vdd#branch
+
+.endc
+.end

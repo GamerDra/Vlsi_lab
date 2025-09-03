@@ -1,0 +1,29 @@
+*nmos inverter with restive load
+
+.include /home/rudra/Documents/vlsilab/t14y_tsmc_025_level3.txt
+
+*voltage
+VDD vdd 0 5
+VIN in 0 PULSE(0 5 0n 1n 1n 50n 100n)
+VS vs 0 0
+
+*resistor
+r0 vdd out 10k
+* nmos transistor
+
+m1 out in vs vs cmosn l=1u w=0.5u
+
+.dc Vin 0 5 0.01
+.tran 1n 200n
+
+.control
+foreach wid 1.6e-6 6.4e-6 9.6e-6
+alter m1 w = $wid
+run
+end
+.endc
+
+.control
+    plot dc1.out dc2.out dc3.out
+    plot tran1.out tran2.out tran3.out in
+.endc

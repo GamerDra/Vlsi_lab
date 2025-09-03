@@ -1,0 +1,35 @@
+*NMOS Characterstics
+
+*includ eth model files
+.include /home/vlsilab/UG_students_2025/t14y_tsmc_025_level3.txt
+
+*netist
+* m_instance_name drain_mode gate_node
+*m` vdd in vaa 0 xmoan l=1u
+m1 drain gate 0 0 cmosn l=3u w=20u
+
+vdd drain 0 dc 5
+vgg gate 0 dc 5
+
+.dc vdd 0 5 0.1 vgg 0 5 1
+
+
+.control
+foreach x 0.1 0.4 0.8
+altermod cmosn vto = $x
+run
+end
+.endc
+
+.control
+foreach iter 1 2 3
+setplot dc$iter
+plot -vdd#branch
+end
+.endc
+
+.control
+set filetype=ascii
+write output.txt
+.endc
+.end

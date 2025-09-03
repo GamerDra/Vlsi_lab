@@ -1,0 +1,38 @@
+*NMOS Char
+
+.include /home/vlsilab/UG_students_2025/t14y_tsmc_025_level3.txt
+
+M1 vdd vin 0 0 cmosn l=0.8u w=0.3u
+
+
+Vdd vdd 0 dc 3.3
+Vin vin 0 3.3
+Vb vb 0 dc 3.3
+
+* .DC Vin 0 3.3 0.1 Vdd 0 3.3 1
+.dc vdd 0 5 0.1 vin 0 5 1
+* .DC Vin 0 3.3 0.1
+
+.control
+set temp =0
+run
+setplot dc1
+plot -Vdd#branch title 'temp = 0'
+
+set temp =27
+run
+setplot dc2
+plot -Vdd#branch title 'temp = 27'
+
+set temp =45
+run
+setplot dc3
+plot -Vdd#branch title 'temp = 45'
+
+set temp =90
+run
+setplot dc4
+plot -Vdd#branch title 'temp = 90'
+.endc
+.end
+
