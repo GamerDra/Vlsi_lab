@@ -1,0 +1,26 @@
+*NMOS Char
+
+.include /mnt/shared/Docs/Rudra/NITK/sem5/Vlsi_lab/t14y_tsmc_025_level1.txt
+m1 drain gate source bulk ritsubn1 l=1u w=0.5u
+vdd drain 0 3.3
+vin gate 0 3.3
+vss source 0 0
+vbb bulk 0 3.3
+
+.dc vdd 0 3.3 0.1
+
+.control
+foreach vb -2 -1 1
+alter vbb=$vb
+run
+end
+.endc
+
+.control
+foreach iter 1 2 3 4
+setplot dc$iter
+plot (-vdd#branch)
+end
+.endc
+
+.end

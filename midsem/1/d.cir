@@ -1,0 +1,27 @@
+*as
+
+*includ eth model files
+.include /mnt/shared/Docs/Rudra/NITK/sem5/Vlsi_lab/t14y_tsmc_025_level1.txt
+
+Vdd vdd 0 dc 5
+Vin vin 0 dc 2.5
+
+M1 vdd vin 0 0 RITSUBN1 l=1u w=1u
+
+.dc vin 0 3.3 0.1 vdd 0 3.3 1
+
+.control
+    foreach x 0.1 0.5 0.8
+    altermod RITSUBN1 VTO = $x
+    run
+    end
+.endc
+
+.control
+    foreach iter 1 2 3
+    setplot dc$iter
+    plot -vdd#branch
+    run
+    end
+
+.endc

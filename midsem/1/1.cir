@@ -1,0 +1,29 @@
+* nmos char
+
+*includ eth model files
+.include /mnt/shared/Docs/Rudra/NITK/sem5/Vlsi_lab/t14y_tsmc_025_level3.txt
+
+
+*netlist
+VDD vdd 0 dc 5
+Vin vin 0 dc 1
+
+*DGSB
+m1 vdd vin 0 0 cmosn l=1u w=1u
+
+
+.control
+    dc Vin 0 5 0.1 VDD 0 3.3 1
+    run
+    setplot dc1
+    plot -vdd#branch
+
+    dc VDD 0 5 0.1 Vin 0 3.3 1
+    run
+    setplot dc2
+    plot -vdd#branch
+.endc
+.end
+
+
+

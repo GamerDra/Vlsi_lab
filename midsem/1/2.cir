@@ -1,0 +1,28 @@
+*
+
+*includ eth model files
+.include /mnt/shared/Docs/Rudra/NITK/sem5/Vlsi_lab/t14y_tsmc_025_level3.txt
+
+
+V_dd vdd 0 dc 5
+V_in vin 0 dc 2.5
+
+m1 vdd vin 0 0 cmosn w=1u l=1u
+
+.dc V_in 0 3.3 0.1 V_dd 0 3.3 1
+
+.control
+
+    foreach x 1.6u 6.4u 9.6u
+    alter m1 l = $x
+    run
+    end
+.endc
+
+.control
+    foreach iter 1 2 3
+    setplot dc$iter
+    plot -vdd#branch
+    end
+.endc
+.end

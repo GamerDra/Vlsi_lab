@@ -1,0 +1,62 @@
+*pmos load inverter
+
+.include /mnt/shared/Docs/Rudra/NITK/sem5/Vlsi_lab/t14y_tsmc_025_level3.txt
+*netlist
+Vdd vdd 0 dc 5
+* pulse (min, high , delay, tr, tf, on time , total period)
+Vin vin 0 Pulse(0 5 0 1p 1p 5n 10n)
+
+m0 out 0 vdd vdd cmosp w=1u l=1u
+m1 out vin 0 0 cmosn w=1u l=1u
+
+*capcitance
+cload out 0 10f
+
+.dc vin 0 5 0.01
+*.tran stepsize total time
+.tran 0.01n 40n
+
+.control
+    foreach x 1u 2u 4u
+    alter m1 w=$x
+    run
+    meas tran vmin MIN out FROM=5n to=30n
+    meas tran vmax MAX out FROM=5n to=30n
+    let v10 = vmin  + 0.1*(vmax-vmin)
+    let v90 = vmin  + 0.9*(vmax-vmin)
+    print v10 v90
+
+    meas tran tr TRIG out VAL=v10 RISE=1 TARG out VAL=v90 RISE=1
+    meas tran tf TRIG out VAL=v90 FALL=1 TARG out VAL=v10 FALL=1
+
+    let v_50 = vmin + (vmax-vmin)/2
+
+    meas tran pdhl TRIG vin VAL=2.5 RISE=1 targ out VAL=v_50 FALL=1
+    meas tran pdlh TRIG vin VAL=2.5 FALL=1 TARG out VAL=v_50 RISE=1
+
+    let pd = (pdhl+pdlh)/2
+
+    let slope = deriv(out)
+
+    meas dc voh find out WHEN slope =-1 cross =1
+    meas dc vil find vin WHEN slope = -1 cross = 1
+    meas dc vol find out WHEN slope =-1 cross =2
+    meas dc vih find vin WHEN slope = -1 cross = 2
+
+    let nmh = voh - vih
+    let nml = vil -vol
+    print nmh nml
+    let pwr = (vdd)*(-vdd#branch)
+    meas tran Pavg AVG pwr from=0n to=200n
+    meas tran Pmax MAX pwr from=0n to=200n
+    meas tran Energy INTEG pwr from=0n to=200n
+    end
+.endc
+
+
+.control
+    plot dc1.out dc2.out dc3.out
+    plot tran1.out tran2.out  tran3.out vin
+    plot tran1.pwr
+.endc
+.end
