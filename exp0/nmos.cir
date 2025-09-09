@@ -20,7 +20,7 @@ plot -vdd#branch
 dc vdd 0 5 0.1 vin 0 3.3 1
 run
 setplot dc2
-plot -vdd#branch
+plot vdd#branch
 
 .endc
 .end
